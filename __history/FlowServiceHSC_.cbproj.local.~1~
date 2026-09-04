@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.557,=C:\Users\Администратор\Documents\Embarcadero\Studio\Projects\Unit2.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.394,C:\Users\Администратор\Documents\Embarcadero\Studio\Projects\FlowService\FlowServiceHSC_.cbproj=C:\Users\Администратор\Documents\Embarcadero\Studio\Projects\Project2.cbproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.002,C:\Users\Администратор\Documents\Embarcadero\Studio\Projects\FlowService\FlowServiceHSC.h=C:\Users\Администратор\Documents\Embarcadero\Studio\Projects\Unit2.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.002,C:\Users\Администратор\Documents\Embarcadero\Studio\Projects\FlowService\FlowServiceHSC.cpp=C:\Users\Администратор\Documents\Embarcadero\Studio\Projects\Unit2.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.002,C:\Users\Администратор\Documents\Embarcadero\Studio\Projects\FlowService\FlowServiceHSC.fmx=C:\Users\Администратор\Documents\Embarcadero\Studio\Projects\Unit2.fmx</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.766,=C:\Users\Администратор\Documents\Embarcadero\Studio\Projects\Project2PCH1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.589,C:\Users\Администратор\Documents\Embarcadero\Studio\Projects\FlowService\TabbedApplicationPCH.h=C:\Users\Администратор\Documents\Embarcadero\Studio\Projects\Project2PCH1.h</Transaction>
+  </Transactions>
+</BorlandProject>

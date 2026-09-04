@@ -1,0 +1,368 @@
+ //---------------------------------------------------------------------------
+
+#include <fmx.h>
+#include <System.DateUtils.hpp>
+#pragma hdrstop
+
+#include "THscDevice.h"
+
+#include <System.IOUtils.hpp>
+
+//using namespace std;
+
+#include <System.SysUtils.hpp>
+
+#include "TDebugForm.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.fmx"
+
+
+//extern static TDebug Debug;
+TDebugForm *DebugForm;
+ /*
+//---------------------------------------------------------------------------
+__fastcall TDebug::TDebug()
+{
+
+
+}
+
+void TDebug::AddMSG (String LocData)
+{
+      //MSG = new TMSG();
+
+      MSG.Time = Time();
+      MSG.Data =  LocData;
+
+      MSGS.push_back(MSG);
+
+      OnAddMsg(this);
+}
+
+void TDebug::SetOnAddMSG (TOnAddMSG OnAddMSG)
+{
+        OnAddMsg =  OnAddMSG;
+}
+
+TMSG::TMSG()
+{
+
+
+}
+
+String TMSG::msg ()
+{
+      String temp;
+      temp = Direction+" "+DateTimeToStr(Time)+"::"+Data+" **"+Note;
+}
+
+*/
+
+//---------------------------------------------------------------------------
+__fastcall TDebugForm::TDebugForm(TComponent* Owner)
+	: TForm(Owner)
+{
+   	Debug = new TDebug;
+	Debug->SetOnAddMSG(OnAddMSGForm);
+
+
+
+   //SetOnCheckBox->IsChecked = true;
+}
+
+
+
+
+
+//---------------------------------------------------------------------------
+
+void __fastcall TDebugForm::OnAddMSGForm()
+{
+    UnicodeString String;
+
+    do
+    {
+
+    if ( SetOnCheckBox->IsChecked == false )
+    {
+       break;
+    }
+
+
+    if (CheckBox5->IsChecked == false )
+    {
+       if ((Debug->MSG.Type=="RD")&&(CheckBox1->IsChecked == false ))
+    {
+       break;
+    }
+
+    if ((Debug->MSG.Type=="WD")&&(CheckBox2->IsChecked == false ))
+    {
+       break;
+    }
+
+	if ((Debug->MSG.Type=="SYS")&&(CheckBox4->IsChecked == false ))
+    {
+       break;
+    }
+
+
+	if ((Debug->MSG.Type=="ENT")&&(CheckBox4->IsChecked == false ))
+    {
+       break;
+    }
+     }
+     else
+
+     {
+       	if ((Debug->MSG.Type=="RWD")||(Debug->MSG.Type=="RRD")||(Debug->MSG.Type=="PHT")||(Debug->MSG.Type=="ERR"))
+    {
+
+    }    else
+
+    {
+        break;
+    }
+    }
+
+    String =  Debug->MSG.Type+" : "+Debug->MSG.Direction+" :: "+Debug->MSG.Time+ ":"+IntToStr(MilliSecondOf(TimeOf(Debug->MSG.Time)))+" ::     "+Debug->MSG.msg+" **"+Debug->MSG.Data;
+   //  ///DebugMemo->Lines->Append(Debug->MSG->msg);
+    DebugMemo->Lines->Append(" " );
+      DebugMemo->Lines->Append(String);
+
+    if (Debug->state == 1)
+    {
+     if   (DataReadComboBox->ItemIndex==0)
+{
+    DataReadEdit->Text =   IntToStr(Debug->Int);
+}
+else if (DataReadComboBox->ItemIndex==1)
+{
+    DataReadEdit->Text =  IntToHex(Debug->Int);
+}
+else if (DataReadComboBox->ItemIndex==2)
+{
+     DataReadEdit->Text =  FloatToStr(Debug->Float);
+}
+else if (DataReadComboBox->ItemIndex==3)
+{
+        DataReadEdit->Text =  Debug->Str;
+}
+       Debug->state = 0;
+    }
+
+
+    } while (0);
+}
+//
+void __fastcall TDebugForm::FormShow(TObject *Sender)
+{
+  int c =    Debug->MSGS.size();
+
+  for(int i=0;i<c;i++)
+  {
+    //  DebugMemo->Lines->Append(Debug->MSGS[i].msg);
+
+  }
+
+
+
+
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TDebugForm::CleanButtonClick(TObject *Sender)
+{
+DebugMemo->Text = "";
+DebugMemo->ClearContent();
+DebugMemo->Lines->Clear();
+}
+//---------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+void __fastcall TDebugForm::PauseButtonClick(TObject *Sender)
+{
+
+         PauseButton->Enabled = false;
+         PlayButton->Enabled = true;
+
+
+
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDebugForm::PlayButtonClick(TObject *Sender)
+{
+  unsigned  Reg;
+  unsigned  Data;
+  float FData;
+  String str="123";
+
+
+         // PauseButton->Enabled = true;
+         // PlayButton->Enabled = false;
+         str =  AdrEdit->Text;
+         if (TryStrToUInt(str,Reg))
+  {
+         // Запись
+         if (DirectionComboBox->ItemIndex==0)
+   {
+         switch (DataWriteComboBox->ItemIndex)
+    {
+         //DEC
+         case 0:
+         {
+           if (TryStrToUInt(DataWriteEdit->Text,Data))
+           {
+			   HSC->WriteReg(Reg, (uint16_t)Data);
+           }
+
+		 };break;
+
+         //HEX
+         case 1:
+         {
+
+           if (TryStrToUInt(DataWriteEdit->Text,Data))
+           {
+               HSC->WriteReg(Reg, (uint16_t)Data);
+           }
+
+         };break;
+
+         //Float
+         case 2:
+         {
+           if (TryStrToFloat(DataWriteEdit->Text,FData))
+           {
+               HSC->WriteReg(81, Reg, FData);
+           }
+         };break;
+
+    }
+   }
+       //Чтение
+        if (DirectionComboBox->ItemIndex==1)
+        {
+        if (TryStrToUInt(DataWriteEdit->Text,Data))
+        {
+         HSC->ReadDataFromDevice(Reg, Data);
+        }
+        else
+        {
+          HSC->ReadDataFromDevice(Reg, 1);
+        }
+
+        }
+
+
+
+  }
+
+
+          //HSC->Read;
+
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDebugForm::SetOnCheckBoxChange(TObject *Sender)
+{
+   /*  if (SetOnCheckBox->IsChecked == false )
+     {
+        SetOnCheckBox->IsChecked = true;
+     }    else
+     {
+        SetOnCheckBox->IsChecked = false;
+     }   */
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDebugForm::Button4Click(TObject *Sender)
+{
+
+   SetOnCheckBox->IsChecked = true;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDebugForm::Button1Click(TObject *Sender)
+{
+Close();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDebugForm::DirectionComboBoxChange(TObject *Sender)
+{
+        switch (DirectionComboBox->ItemIndex)
+    {
+     case 0:
+     {
+       DataWriteComboBox->Enabled = true;
+     }; break;
+
+     case 1:
+     {
+     	DataWriteComboBox->Enabled = false;
+     }; break;
+
+    }
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TDebugForm::Button3Click(TObject *Sender)
+{
+if (HSC->PingEnable == True)
+{
+   HSC->PingOff();
+} else
+{
+   HSC->PingOn();
+}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDebugForm::DataReadComboBoxChange(TObject *Sender)
+{
+if   (DataReadComboBox->ItemIndex==0)
+{
+    DataReadEdit->Text =   IntToStr(Debug->Int);
+}
+else if (DataReadComboBox->ItemIndex==1)
+{
+    DataReadEdit->Text =  IntToHex(Debug->Int);
+}
+else if (DataReadComboBox->ItemIndex==2)
+{
+     DataReadEdit->Text =  FloatToStr(Debug->Float);
+}
+else if (DataReadComboBox->ItemIndex==3)
+{
+        DataReadEdit->Text =  Debug->Str;
+}
+
+
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDebugForm::Button5Click(TObject *Sender)
+{
+   /*if (Button5->Tag==0)
+	{
+        HSC->
+		 Button5->Tag=1;
+	}   else
+{
+
+	Button5->Tag=1 ;
+}   */
+}
+//---------------------------------------------------------------------------
+
